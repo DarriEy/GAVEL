@@ -528,7 +528,7 @@ def SW_info(df_q1, df_q2, df_q3, df_fin, Config_Path, img_dir):
             ax4.set_title(MetaDict['station_name'] + ': Short Wave Radiation Net')
             ax4.set_ylabel(read_config('Units', Config_Path)['short_wave_radiation_out'].split(',')[0])
             ax4.set_xlabel('')
-            (df_q3['sw_in']-df_q3['sw_out']).plot(ax = ax4)
+            (df_q3['sw_in'].resample('D').mean()-df_q3['sw_out'].resample('D').mean()).plot(ax = ax4)
             #plot other temperature variables if available
             ax4.legend(bbox_to_anchor=(0., 1.15, 1., .102), loc=3, ncol=4, mode="expand", borderaxespad=0.)
             fig4.set_size_inches(plotsz)    #Save the figure
