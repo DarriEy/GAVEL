@@ -523,6 +523,17 @@ def SW_info(df_q1, df_q2, df_q3, df_fin, Config_Path, img_dir):
             fig3.set_size_inches(plotsz)    #Save the figure
             fig3.savefig(img_dir + '\\' + MetaDict['station_code'] + '_' + par + '_' + MetaDict['year'] + '_q3e.png', format = 'png', dpi = 300, pad_inches = None, bbox_inches = 'tight')
 
+            #plot daily average difference between SW_in and SW_out
+            fig4, ax4 = plt.subplots()
+            ax4.set_title(MetaDict['station_name'] + ': Short Wave Radiation Net')
+            ax4.set_ylabel(read_config('Units', Config_Path)['short_wave_radiation_out'].split(',')[0])
+            ax4.set_xlabel('')
+            (df_q3['sw_in']-df_q3['sw_out']).plot(ax = ax4)
+            #plot other temperature variables if available
+            ax4.legend(bbox_to_anchor=(0., 1.15, 1., .102), loc=3, ncol=4, mode="expand", borderaxespad=0.)
+            fig4.set_size_inches(plotsz)    #Save the figure
+            fig4.savefig(img_dir + '\\' + MetaDict['station_code'] + '_' + MetaDict['year'] + '_SWDiff.png', format = 'png', dpi = 300, pad_inches = None, bbox_inches = 'tight')
+
             plt.close('all')
 
 def Snow_info(df_q1, df_q2, df_q3, df_fin, Config_Path, img_dir):
@@ -590,6 +601,7 @@ def QCFinplot(df_fin, Config_Path, img_dir):
     ParamDict = read_config('Parameters', Config_Path)
     Params = flatten(ParamDict.values())
     #plot all columns in original dataset
+
     for col in Params:
         for par in col.split(','):
             fig, ax = plt.subplots()
