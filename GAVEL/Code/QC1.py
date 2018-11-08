@@ -12,10 +12,13 @@ import sys
 Config = ConfigParser.ConfigParser() #initialize the config parser
 
 '''
+QC1 module of GAVEL quality control software, first part of automatic quality
+control, with simple QC tests
+
 File name: QC1.py
-Author: Darri Eyþórsson
+Author: Darri Eythorsson
 Date Created: 15.08.2018
-Date Last Modified: 2.10.2018
+Date Last Modified: 2.11.2018
 Python Version: 2.7
 Version: 1.0
 '''

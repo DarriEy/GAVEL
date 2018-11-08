@@ -5,9 +5,23 @@ import matplotlib.pyplot as plt
 import ConfigParser
 import os
 import sys
-from QC1 import ConfigSectionMap, read_config
+from QC1 import ConfigSectionMap, read_config, fill_obs
 Config = ConfigParser.ConfigParser() #initialize the config parser
 
+'''
+Module which produces a final dataframe with all obsevations on the record for
+a specific AWS in the GAVEL system. The module calculates long term statistics
+and updates the local parameter files.
+
+File name: ConfigStat.py
+Author: Darri Eythorsson
+Date Created: 26.10.2018
+Date Last Modified: 26.10.2018
+Python Version: 2.7
+Version: 1.0
+'''
+
+#Function to read all the data for an AWS and merge into on dataframe
 def read_data(data_dir):
 
     #Get the paths to the datafiles
@@ -21,6 +35,7 @@ def read_data(data_dir):
 
     return df
 
+#Function that updates local configuration files
 def write_config(df, cols, config_dir):
 
     #Get the paths to the config files
@@ -50,6 +65,8 @@ def write_config(df, cols, config_dir):
             con_file.writelines(Lines)
 
 #Fill inn missing obs based on the timedelta
+
+'''
 def fill_obs(df):
     first = df.index.values[0]
     second = df.index.values[1]
@@ -62,6 +79,7 @@ def fill_obs(df):
     real_df.loc[df.index.values] = df
 
     return(real_df)
+'''
 
 def runme(Config_Path):
     Config_Path = Config_Path.decode('utf-8')
@@ -82,7 +100,7 @@ def runme(Config_Path):
     write_config(df, cols, config_dir)
 
     #Fill the dataset to 10 min resolution for the entire periods
-    df = fill_obs(df)
+    df = fill_obs(df, Config_Path)
 
     #Save the compiled database
     df.to_csv(big_df, index_label = 'time')

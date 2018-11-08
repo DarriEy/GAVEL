@@ -14,25 +14,28 @@ from QC1 import fill_obs, ConfigSectionMap, read_config, read_data
 from QCFin import SGF, flatten
 
 '''
-Module to plot GAVEL QC results
-File name: QC1.py
+Module to plot the results and steps of GAVEL Quality control software
+
+File name: QCplot.py
 Author: Darri Eythorsson
 Date Created: 26.10.2018
 Date Last Modified: 26.10.2018
 Python Version: 2.7
 Version: 1.0
 '''
-
+#Define the size of plots to output
 plotsz = (11.69, 3)
 plotsz2 = (23, 12)
 
+#plot the QC flags of a given parameter
 def plot_flags(df, param, ax, QC, RepDict):
-    #Plot all flagged datapoints in t '''
-    prob_color = '#ffa500'
-    cert_color = '#ff0000'
-    for key in  df.groupby(param + '_' + QC).groups.keys():
+    prob_color = '#ffa500' #initialize color for probable errors
+    cert_color = '#ff0000' #initialize color for certain errors
+
+    #loop through all error codes produed by GAVEL
+    for key in df.groupby(param + '_' + QC).groups.keys():
         if '(c)' in key:
-            #Plot Certain Errors in Red
+            #Plot Certain Errors starting with red
             dates = df.groupby(param + '_' + QC).groups[key].values
             values = df.loc[df.groupby(param + '_' + QC).groups[key]][param].values
             df.ix[dates, 'Certain Errors' + key] = values
@@ -43,7 +46,7 @@ def plot_flags(df, param, ax, QC, RepDict):
 
         elif '(p)' in key:
             if RepDict['prob_plot'] == 'true':
-                #Plot possible Errors in Orange
+                #Plot possible Errors starting with orange
                 dates = df.groupby(param + '_' + QC).groups[key].values
                 values = df.loc[df.groupby(param + '_' + QC).groups[key]][param].values
                 df.ix[dates, 'possible Errors' + key] = values
@@ -534,6 +537,7 @@ def SW_info(df_q1, df_q2, df_q3, df_fin, Config_Path, img_dir):
             fig4.set_size_inches(plotsz)    #Save the figure
             fig4.savefig(img_dir + '\\' + MetaDict['station_code'] + '_' + MetaDict['year'] + '_SWDiff.png', format = 'png', dpi = 300, pad_inches = None, bbox_inches = 'tight')
 
+
             plt.close('all')
 
 def Snow_info(df_q1, df_q2, df_q3, df_fin, Config_Path, img_dir):
@@ -601,7 +605,6 @@ def QCFinplot(df_fin, Config_Path, img_dir):
     ParamDict = read_config('Parameters', Config_Path)
     Params = flatten(ParamDict.values())
     #plot all columns in original dataset
-
     for col in Params:
         for par in col.split(','):
             fig, ax = plt.subplots()

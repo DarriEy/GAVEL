@@ -8,8 +8,19 @@ import sys
 from scipy.signal import savgol_filter
 from QC1 import ConfigSectionMap, read_config
 import warnings
-
 Config = ConfigParser.ConfigParser() #initialize the config parser
+
+'''
+Module for preparing the final quality controled dataset in GAVEL quality control
+software.
+
+File name: QCFin.py
+Author: Darri Eythorsson
+Date Created: 15.08.2018
+Date Last Modified: 2.11.2018
+Python Version: 2.7
+Version: 1.0
+'''
 
 #Savitsky Golay Filter function
 def SGF(df, Params, window = 7, order = 3):

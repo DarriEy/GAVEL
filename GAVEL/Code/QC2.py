@@ -8,7 +8,17 @@ import sys
 from QC1 import *
 Config = ConfigParser.ConfigParser() #initialize the config parser
 
+'''
+QC2 module of GAVEL quality control software, second part of automatic quality
+control, remove obvious errors, interpolate and re-run QC1 tests
 
+File name: QC2.py
+Author: Darri Eythorsson
+Date Created: 15.08.2018
+Date Last Modified: 2.11.2018
+Python Version: 2.7
+Version: 1.0
+'''
 #Remove errors flagged as certain
 def rem_cert(df):
     for col in df.columns:
@@ -20,8 +30,9 @@ def rem_cert(df):
 def interpol(df, Config_Path, ParamDict):
 
     Config_dict = read_config('QC2_Parameters', Config_Path)
-    method = Config_dict['ipolmtd']
+    method = Config_dict['ipolmtd'] #read which method to use for interpolation
 
+    #go through all the parameters and interpolate
     for Param in ParamDict.keys():
         for para in ParamDict[Param]:
             if para in df.columns:
@@ -97,9 +108,8 @@ def runme(Config_Path):
     #Perfrom QC2
     df = QC2(df, Config_Path, QC = 'QC2')
 
-    #Save QC2 data #
+    #Save QC2 data 
     df.to_csv(path_or_buf = QC2_path, index_label = 'time')
-    df.to_csv(path_or_buf = QC3_path, index_label = 'time')
 
 if __name__ == '__main__':
     Config_Path = sys.argv[1]

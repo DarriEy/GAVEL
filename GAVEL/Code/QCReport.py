@@ -13,12 +13,23 @@ import errno
 from QC1 import fill_obs, ConfigSectionMap, read_config, read_data
 from QCFin import SGF, flatten
 
-plotsz = (11.69, 3)
-plotsz2 = (23, 12)
+'''
+Module to produce tables that show the results and steps of GAVEL Quality
+control software
+
+File name: QCReport.py
+Author: Darri Eythorsson
+Date Created: 26.10.2018
+Date Last Modified: 26.10.2018
+Python Version: 2.7
+Version: 1.0
+'''
 
 # ------------------------- Functions to produdce tables for the report -----------------------
+#Function to collect information on each parameter
 def ParamInfo(df, Parameter):
 
+    #Create dictionary with count of QC labels in QC1
     ParDictQC1 = {}
     ParDictQC1['Observations'] = df.shape[0]
     if 'Good' in df[Parameter + '_QC1'].values:
@@ -43,6 +54,7 @@ def ParamInfo(df, Parameter):
     ParDictQC1['Num possible Errors'] = df[Parameter + '_QC1'].value_counts().loc[prob_err].sum()
     ParDictQC1['Num Missing Values'] = df[Parameter + '_QC1'].value_counts().loc[missing].sum()
 
+    #Create dictionary with count of QC labels in QC2
     ParDictQC2 = {}
     if 'Good' in df[Parameter + '_QC2'].values:
         ParDictQC2['Num_fill'] = df[Parameter + '_QC2'].value_counts().loc['Good']-df[Parameter + '_QC1'].value_counts().loc['Good']
@@ -70,6 +82,7 @@ def ParamInfo(df, Parameter):
 
     return ParDictQC1, ParDictQC2
 
+#Function to produce table with average monthly and yearly measurement values
 def AvgTable(df, Parameters, tab_dir, Units):
     warnings.simplefilter('ignore', RuntimeWarning)
 
@@ -120,6 +133,7 @@ def AvgTable(df, Parameters, tab_dir, Units):
         df_FIN.loc[index] = [m + '' for m,n in zip(list(row),list(df_MS.loc[index]))]
         #Option for adding the std to the mean table
         #df_FIN.loc[index] = [m + '(' + n +')' for m,n in zip(list(row),list(df_MS.loc[index]))]
+
     for index, row in df_MS.iterrows():
         df_FINs.loc[index] = [m + '' for m,n in zip(list(row),list(df_MS.loc[index]))]
     for index, row in df_MMa.iterrows():
@@ -127,7 +141,6 @@ def AvgTable(df, Parameters, tab_dir, Units):
     for index, row in df_MMi.iterrows():
         df_FINmi.loc[index] = [m + '' for m,n in zip(list(row),list(df_MS.loc[index]))]
         new_index.append(index.strftime('%B'))
-
 
     #mark observations that have less than 80% of valid observations per month with '*'
     for col in df_MP.columns:
@@ -157,6 +170,7 @@ def AvgTable(df, Parameters, tab_dir, Units):
     df_Ymi = pd.DataFrame(data = {'Min' : [m + '' for m,n in zip(df_YMMi.values[0], df_YS.values[0])]}).transpose()
     #option for adding the std to the mean table within braces
     #df_Y = pd.DataFrame(data = {'Yearly average' : [m + '(' + n +')' for m,n in zip(df_YM.values[0], df_YS.values[0])]}).transpose()
+
     df_Y.columns = df_FIN.columns
     df_Ys.columns = df_FIN.columns
     df_Yma.columns = df_FIN.columns
@@ -190,13 +204,7 @@ def AvgTable(df, Parameters, tab_dir, Units):
     with open(os.path.join(tab_dir, 'MinTable.tex'), 'w') as tf:
         tf.write(df_FINmi.to_latex())
 
-    '''
-    print(df_FIN)
-    print(df_FINs)
-    print(df_FINma)
-    print(df_FINmi)
-    '''
-
+#Function to produce table with annual QC flags for each parameter
 def QCtables(df, Parameters, tab_dir):
     #Make tables showing the annual QC statistics for each parameter
     #Loop through the parameters
@@ -305,7 +313,6 @@ def runme(Config_Path):
     if RepDict['sgf_pars'] == 'true':
         sgf_pars = RepDict['sgf_pars'].split(',')
         df = SGF(df, sgf_pars, int(RepDict['sgf_window']), int(RepDict['sgf_order']))
-
 
     #Calculate Averages
     AvgTable(df[Parameters], Parameters, tab_dir, Units)
