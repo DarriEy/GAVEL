@@ -4,10 +4,21 @@ import ConfigParser
 import logging
 import datetime
 
-Config = ConfigParser.ConfigParser() #initialize the config parser
+'''
+GAVEL quality control software for glacial meteorological observations. This is
+the master program that runs all submodules given a global config file.
+
+File name: GAVEL.py
+Author: Darri Eythorsson
+Date Created: 15.09.2018
+Date Last Modified: 8.11.2018
+Python Version: 2.7
+Version: 1.0
+'''
+#initialize the config parser
+Config = ConfigParser.ConfigParser()
 
 #initialize logger
-#logging.basicConfig(level = logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
@@ -19,12 +30,7 @@ handler.setLevel(logging.DEBUG)
 # create a logging format
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
-
-# add the handlers to the logger
-logger.addHandler(handler)
-
-# This code runs all the modules of the GAVEL Quality Control system given
-# a local configuration file.
+logger.addHandler(handler) # add the handlers to the logger
 
 #Map the configurations to a dictionary
 def ConfigSectionMap(section):
@@ -46,6 +52,7 @@ def read_config(Param, conf_file):
     Config_dict = ConfigSectionMap(Param)
     return Config_dict
 
+#Run GAVEL for specified list of paths to local Config files.
 def run(Config_Paths):
     MetaDict = read_config('meta', Config_Path)
 
@@ -94,7 +101,7 @@ def run_sing(Config_Path):
 
     run(Config_Paths)
 
-#Run all local config files for all stations specified in Global Config file
+#Run all local config files for all stations
 def run_all(Config_Path):
     PathDict = read_config('DirPaths', Config_Path)
     MetaDict = read_config('meta', Config_Path)
@@ -116,16 +123,13 @@ def run_all(Config_Path):
 #Run list of config files
 def run_list(Config_Path):
     ConDict = read_config('ConList', Config_Path)
-
     station_list = ConDict['station_list'].decode('utf-8').splitlines()
-
     run(station_list)
 
 def runme(Config_Path):
     #Read the data paths from the Local Config file
     Config_Path = Config_Path.decode('utf-8')
     MetaDict = read_config('meta', Config_Path)
-
     logger.info('Read Global Configuration file at: %s' %Config_Path)
 
     #Read from global config whether to run all or specific stations
@@ -141,7 +145,6 @@ def runme(Config_Path):
     else:
         logger.info('Path setting for GAVEL incorrect')
         print 'Specify whether to run all stations or specific instances'
-
 
 if __name__ == '__main__':
     Config_Path = 'F:\Þróunarsvið\Rannsóknir\M-Sameign\GAVEL\GAVEL1\GAVEL\GloConfig_GAVEL.ini'
